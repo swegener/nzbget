@@ -286,7 +286,17 @@ bool FileSystem::AllocateFile(const char* filename, int64 size, bool sparse, CSt
 		errmsg = GetLastErrorMessage();
 		return false;
 	}
+
+	// this really allocates the file space, instead of just increasing the file size
+	posix_fallocate(fileno(file), 0, size);
+
+	// check if it worked
+	fseek(file, 0, SEEK_END);
+	ok = ftell(file) == size;
 	fclose(file);
+
+	if (ok)
+		return ok;
 
 	// there are no reliable function to expand file on POSIX, so we must try different approaches,
 	// starting with the fastest one and hoping it will work
