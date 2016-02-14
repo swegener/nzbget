@@ -567,6 +567,12 @@ void NCursesFrontend::PrintStatus()
 		*timeString, *postStatus, m_pauseDownload ? (m_standBy ? ", Paused" : ", Pausing") : "",
 		*downloadLimit, *Util::FormatSpeed(averageSpeed));
 	PlotLine(status, statusRow, 0, NCURSES_COLORPAIR_STATUS);
+
+	static int screen_count;
+	if (screen_count++ % 5 == 0)
+	{
+	    PrintScreenTitle(status);
+	}
 }
 
 void NCursesFrontend::PrintKeyInputBar()
@@ -804,6 +810,30 @@ void NCursesFrontend::PrintTopHeader(char* header, int lineNr, bool upTime)
 	}
 
 	PlotLine(buffer, lineNr, 0, NCURSES_COLORPAIR_INFOLINE);
+}
+
+void NCursesFrontend::PrintScreenTitle(char* szHeader)
+{
+	static char* term;
+	static bool is_screen, is_xterm;
+
+	if (!term)
+	{
+		term = getenv("TERM");
+		if (term)
+		{
+			is_screen = !strcmp(term, "screen");
+			is_xterm = !strcmp(term, "xterm");
+		}
+	}
+
+	if (is_screen) {
+		fprintf(stderr, "\033_nzbget -%s\033\\", szHeader);
+	}
+	else if (is_xterm)
+	{
+		fprintf(stderr, "\033]0;nzbget -%s\007", szHeader);
+	}
 }
 
 void NCursesFrontend::PrintGroupQueue()

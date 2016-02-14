@@ -101,6 +101,7 @@ private:
 	int PrintMessage(Message& msg, int row, int maxLines);
 	void PrintKeyInputBar();
 	void PrintStatus();
+	void PrintScreenTitle(char* szHeader);
 	void UpdateInput(int initialKey);
 	void Update(int key);
 	void SetCurrentQueueEntry(int entry);
